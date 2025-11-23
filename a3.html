@@ -1,57 +1,41 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>P5.js 과제 3 - 인터랙티브 토끼</title>
-  
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.2/p5.js"></script>
-  
-  <style>
-    /* CSS: 캔버스를 화면 중앙에 배치하고 배경을 흰색으로 설정합니다. */
-    body {
-      margin: 0;
-      padding: 0;
-      overflow: hidden;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      background-color: white; /* 메인 페이지와 동일한 흰색 배경 */
-    }
-    .back-btn {
-      /* 메인 페이지로 돌아가는 버튼 스타일 */
-      position: fixed;
-      top: 20px;
-      left: 20px;
-      padding: 10px 20px;
-      background: #f0f0f0; 
-      border: 2px solid #3498db;
-      color: #3498db;
-      text-decoration: none;
-      border-radius: 20px;
-      font-weight: bold;
-      z-index: 1000;
-    }
-    .back-btn:hover {
-      background: #3498db;
-      color: white;
-    }
-    .info {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      background: rgba(255,255,255,0.9);
-      padding: 15px;
-      border-radius: 10px;
-      font-size: 14px;
-      z-index: 1000;
-      text-align: left;
-      color: #333;
-    }
-    .info h3 { margin: 0 0 8px 0; color: #3498db; font-size: 1.1em; }
-    .info p { margin: 4px 0; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>[각 파일의 제목은 그대로 유지]</title>
+    
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.2/p5.js"></script>
+    <style>
+        body {
+            /* ... (기존 스타일 유지) ... */
+            font-family: 'Pretendard', sans-serif; /* 폰트 적용 */
+        }
+        .back-btn {
+            /* 위치는 유지 */
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            
+            /* 스타일 수정 */
+            padding: 10px 20px;
+            background: white; /* 흰색 배경 */
+            border: 2px solid #000; /* 검은색 테두리 */
+            color: #000; /* 검정색 글자 */
+            text-decoration: none;
+            border-radius: 8px; /* 메인 페이지와 통일 */
+            font-weight: 600; /* Pretendard 폰트에 맞춰 굵기 조정 */
+            z-index: 1000;
+            transition: all 0.2s ease;
+        }
+        .back-btn:hover {
+            background: #000; /* 호버 시 검은색 배경 */
+            color: white; /* 호버 시 흰색 글자 */
+        }
+        /* ... (나머지 스타일은 그대로 유지) ... */
+    </style>
 </head>
 <body>
   <a href="./index.html" class="back-btn">✔ 메인으로 돌아가기</a>
