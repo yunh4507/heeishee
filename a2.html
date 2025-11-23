@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>P5.js 과제 2 - 상세 묘사 토끼</title>
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.2/p5.js"></script>
+  
+  <style>
+    /* CSS: 캔버스를 화면 중앙에 배치하고 배경을 흰색으로 설정합니다. */
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: white; /* 메인 페이지와 동일한 흰색 배경 */
+    }
+    .back-btn {
+      /* 메인 페이지로 돌아가는 버튼 스타일 */
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      padding: 10px 20px;
+      background: #f0f0f0; 
+      border: 2px solid #3498db;
+      color: #3498db;
+      text-decoration: none;
+      border-radius: 20px;
+      font-weight: bold;
+      z-index: 1000;
+    }
+    .back-btn:hover {
+      background: #3498db;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <a href="./index.html" class="back-btn">✔ 메인으로 돌아가기</a>
+  
+  <script>
+    // ******************************************************
+    // 사용자가 제공한 P5.js 코드 시작
+    // ******************************************************
+    
+    function setup() {
+      createCanvas(windowWidth, windowHeight);
+      background(0); // 배경
+    }
+
+    function draw() {
+      background(230);
+
+      // 토끼 인형
+      drawRabbit(width / 2, height - 250, 1.8);
+    }
+
+    // 토끼 인형 함수
+    function drawRabbit(x, y, s) {
+      push();
+      translate(x, y);
+      scale(s);
+
+      stroke(0);       // 테두리 검정
+      strokeWeight(2);
+      fill(255);       // 흰색 몸통
+
+      // 머리카락 위
+      fill(0)
+      ellipse(0, -119, 210, 238);
+      
+      // 머리카락 아래
+      fill(0)
+      ellipse(0, -40, 160, 140);
+
+      // 목
+      fill(255, 238, 238); // 피부색
+      stroke(224);
+      strokeWeight(0);
+      rect(-25, -40, 50, 65); // x, y, 너비, 높이
+      
+      
+      
+      // 몸통 (둥근 사각형)
+      rectMode(CENTER); // 사각형의 기준점을 중심으로 설정
+      fill(255, 255, 255); // 흰색 옷
+      stroke(255);
+      strokeWeight(0);
+      rect(0, 72.5, 230, 165, 20); // x, y, 너비, 높이, 곡률
+      
+      // 스퀘어넥
+      fill(255, 238, 238);
+      stroke(224);
+      strokeWeight(0);
+      rect(0, 15, 90, 50);
+      
+      
+      // 쇄골
+      fill(220, 190, 190);
+      noStroke();
+      ellipse(-34, 7, 36, 8); // 왼쪽 쇄골
+      ellipse(34, 7, 36, 8);  // 오른쪽 쇄골
+      
+      // 스퀘어넥
+      fill(255);
+      stroke(224);
+      strokeWeight(0);
+      rect(-60, 15, 30, 50); //왼쪽
+      rect(60, 15, 30, 50); //오른쪽
+      
+
+      // 얼굴 그림자
+      fill(200, 175, 175); 
+      noStroke(); 
+      ellipse(0, -99, 100, 140); 
+      
+      // 얼굴
+      fill(255, 238, 238); 
+      noStroke(); 
+      ellipse(0, -108, 140, 148); 
+
+      
+      // 코
+      stroke(0); 
+      strokeWeight(1.3); 
+      line(0, -103, -3, -93); 
+      line(-3, -93, 4.5, -91.5);  
+      
+      // 귀
+      fill(255, 238, 238);
+      noStroke();
+      ellipse(-75, -110, 20, 27); // 왼쪽 귀
+      ellipse(75, -110, 20, 27);  // 오른쪽 귀
+      
+      
+      // 귀 디테일
+      stroke(0); 
+      strokeWeight(1); 
+      line(-80, -112, -73, -112);  // 왼
+      line(80, -112, 73, -112);  // 오
+      line(-76.3, -112, -76.3, -107);  // 왼
+      line(76.3, -112, 76.3, -107);  // 오
+      
+      // 입
+      fill(200, 140, 140); 
+      arc(0, -75, 35, 25, 0, PI); 
+      
+      // 앞머리
+      fill(0); 
+      arc(0, -133, 100, 140, PI, TWO_PI); 
+
+      
+      // 앞머리 디테일
+      fill(255, 238, 238);
+      noStroke();
+      ellipse(-10, -140, 6, 25); 
+      
+
+      // --- 왼쪽 눈꺼풀 곡선 ---
+      noFill(); 
+      stroke(0); 
+      strokeWeight(2);
+      arc(-31, -116, 27, 22, PI, TWO_PI); 
+
+      // --- 오른쪽 눈꺼풀 곡선 ---
+      arc(31, -116, 27, 22, PI, TWO_PI); 
+      
+      // 얼굴 (눈, 코)
+      // 흰자
+      fill(255);
+      noStroke();
+      ellipse(-30, -117, 27, 21); // 왼쪽 눈
+      ellipse(30, -117, 27, 21);  // 오른쪽 눈
+      
+      // 검은자
+      fill(0);
+      noStroke();
+      ellipse(-28, -117, 15, 18); // 왼쪽 눈
+      ellipse(28, -117, 15, 18);  // 오른쪽 눈
+      
+      // 눈 생기
+      fill(255);
+      noStroke();
+      ellipse(-28, -121, 3, 3); // 왼쪽 눈
+      ellipse(28, -121, 3, 3);  // 오른쪽 눈
+      
+
+      pop();
+    }
+    // ******************************************************
+    // P5.js 코드 끝
+    // ******************************************************
+  </script>
+</body>
+</html>
