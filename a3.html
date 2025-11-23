@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>P5.js 과제 3 - 인터랙티브 토끼</title>
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.2/p5.js"></script>
+  
+  <style>
+    /* CSS: 캔버스를 화면 중앙에 배치하고 배경을 흰색으로 설정합니다. */
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: white; /* 메인 페이지와 동일한 흰색 배경 */
+    }
+    .back-btn {
+      /* 메인 페이지로 돌아가는 버튼 스타일 */
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      padding: 10px 20px;
+      background: #f0f0f0; 
+      border: 2px solid #3498db;
+      color: #3498db;
+      text-decoration: none;
+      border-radius: 20px;
+      font-weight: bold;
+      z-index: 1000;
+    }
+    .back-btn:hover {
+      background: #3498db;
+      color: white;
+    }
+    .info {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: rgba(255,255,255,0.9);
+      padding: 15px;
+      border-radius: 10px;
+      font-size: 14px;
+      z-index: 1000;
+      text-align: left;
+      color: #333;
+    }
+    .info h3 { margin: 0 0 8px 0; color: #3498db; font-size: 1.1em; }
+    .info p { margin: 4px 0; }
+  </style>
+</head>
+<body>
+  <a href="./index.html" class="back-btn">✔ 메인으로 돌아가기</a>
+  
+  <div class="info">
+    <h3>상호작용 가이드</h3>
+    <p>✔ **마우스 이동**: 눈동자가 따라옵니다.</p>
+    <p>✔ **캔버스 클릭**: 미소를 지으며 플래시 효과가 나타납니다.</p>
+    <p>✔ **키보드 입력**: 놀람 표정으로 변합니다.</p>
+    <p>✔ **어깨에 호버**: 어깨가 들썩입니다.</p>
+  </div>
+  
+  <script>
+    // ******************************************************
+    // 사용자가 제공한 P5.js 코드 시작
+    // ******************************************************
+    
+    // 애니메이션 변수들
+    let hairSwingX = 0;
+    let hairSwingAmount = 1.3;
+    let hairSwingSpeed = 0.05;
+
+    let blinkTimer = 0;
+    let isBlinking = false;
+    let blinkDuration = 10;
+    let lastMouseX = 0;
+    let lastMouseY = 0;
+    let flashAlpha = 0;
+    let flashRadius = 0;
+    let isSmiling = false;
+    let smileTimer = 0;
+
+    // 볼 홍조 위치 조절 변수
+    let blushXOffset = 40;
+    let blushYOffset = -93;
+    let blushWidth = 22;
+    let blushHeight = 15;
+
+    // 어깨 움직임 변수
+    let leftShoulderLift = 0;
+    let rightShoulderLift = 0;
+    let shoulderLiftAmount = 15;
+
+    // 놀람 표정 변수
+    let isSurprised = false;
+    let surpriseTimer = 0;
+
+    // 눈동자 마우스 추적 변수
+    let eyeFollowMouse = true;
+    let pupilOffsetX = 0;
+    let pupilOffsetY = 0;
+
+    function setup() {
+      createCanvas(windowWidth, windowHeight);
+      background(0);
+      lastMouseX = mouseX;
+      lastMouseY = mouseY;
+    }
+
+    function draw() {
+      background(230);
+
+      hairSwingX = sin(frameCount * hairSwingSpeed) * hairSwingAmount;
+
+      let mouseMoved = abs(mouseX - lastMouseX) > 8 || abs(mouseY - lastMouseY) > 8;
+      
+      if (mouseMoved && !isBlinking) {
+        isBlinking = true;
+        blinkTimer = blinkDuration;
+      }
+      
+      if (isBlinking) {
+        blinkTimer--;
+        if (blinkTimer <= 0) {
+          isBlinking = false;
+        }
+      }
+      
+      if (isSmiling) {
+        smileTimer--;
+        if (smileTimer <= 0) {
+          isSmiling = false;
+        }
+      }
+      
+      // 놀람 타이머 감소
+      if (isSurprised) {
+        surpriseTimer--;
+        if (surpriseTimer <= 0) {
+          isSurprised = false;
+        }
+      }
+      
+      // 눈동자 마우스 추적
+      if (eyeFollowMouse && !isBlinking && !isSurprised) {
+        let charX = width / 2;
+        let charY = height - 250 - 108 * 1.8;
+        
+        let angle = atan2(mouseY - charY, mouseX - charX);
+        
+        pupilOffsetX = constrain(cos(angle) * 4, -4, 4);
+        pupilOffsetY = constrain(sin(angle) * 3, -3, 3);
+      } else {
+        pupilOffsetX = 0;
+        pupilOffsetY = 0;
+      }
+      
+      checkShoulderHover();
+      
+      lastMouseX = mouseX;
+      lastMouseY = mouseY;
+
+      drawRabbit(width / 2, height - 250, 1.8);
+      
+      if (flashRadius > 0) {
+        push();
+        let centerX = width / 2;
+        let centerY = height - 250 - 108 * 1.8;
+        
+        for (let i = 0; i < 8; i++) {
+          let alpha = map(i, 0, 8, 255, 0);
+          let radius = flashRadius * (1 - i * 0.12);
+          
+          fill(255, 255, 255, alpha * (flashRadius / 800));
+          noStroke();
+          ellipse(centerX, centerY, radius * 2, radius * 2);
+        }
+        pop();
+        
+        flashRadius += 50;
+        
+        if (flashRadius > 800) {
+          flashRadius = 0;
+        }
+      }
+      
+      if (flashAlpha > 0) {
+        fill(255, 255, 255, flashAlpha);
+        noStroke();
+        rect(0, 0, width, height);
+        flashAlpha -= 15;
+      }
+    }
+
+    function checkShoulderHover() {
+      let charX = width / 2;
+      let charY = height - 250;
+      let scale = 1.8;
+      
+      let leftShoulderX = charX + (-60) * scale;
+      let leftShoulderY = charY + (15) * scale;
+      let shoulderWidth = 30 * scale;
+      let shoulderHeight = 50 * scale;
+      
+      let rightShoulderX = charX + (60) * scale;
+      let rightShoulderY = charY + (15) * scale;
+      
+      if (mouseX > leftShoulderX - shoulderWidth/2 && 
+          mouseX < leftShoulderX + shoulderWidth/2 &&
+          mouseY > leftShoulderY - shoulderHeight/2 && 
+          mouseY < leftShoulderY + shoulderHeight/2) {
+        leftShoulderLift = lerp(leftShoulderLift, shoulderLiftAmount, 0.2);
+      } else {
+        leftShoulderLift = lerp(leftShoulderLift, 0, 0.2);
+      }
+      
+      if (mouseX > rightShoulderX - shoulderWidth/2 && 
+          mouseX < rightShoulderX + shoulderWidth/2 &&
+          mouseY > rightShoulderY - shoulderHeight/2 && 
+          mouseY < rightShoulderY + shoulderHeight/2) {
+        rightShoulderLift = lerp(rightShoulderLift, shoulderLiftAmount, 0.2);
+      } else {
+        rightShoulderLift = lerp(rightShoulderLift, 0, 0.2);
+      }
+    }
+
+    function mousePressed() {
+      flashAlpha = 255;
+      flashRadius = 50;
+      isSmiling = true;
+      smileTimer = 60;
+    }
+
+    function drawRabbit(x, y, s) {
+      push();
+      translate(x, y);
+      scale(s);
+
+      stroke(0);
+      strokeWeight(2);
+      fill(255);
+
+      fill(0);
+      ellipse(0, -119, 210, 238);
+      
+      fill(0);
+      ellipse(0, -40, 160, 140);
+
+      fill(255, 238, 238);
+      stroke(224);
+      strokeWeight(0);
+      rect(-25, -40, 50, 65);
+      
+      rectMode(CENTER);
+      fill(255, 255, 255);
+      stroke(255);
+      strokeWeight(0);
+      rect(0, 72.5, 230, 165, 20);
+      
+      fill(255, 238, 238);
+      stroke(224);
+      strokeWeight(0);
+      rect(0, 15, 90, 50);
+      
+      fill(220, 190, 190);
+      noStroke();
+      ellipse(-34, 7 - leftShoulderLift/s, 36, 8);
+      ellipse(34, 7 - rightShoulderLift/s, 36, 8);
+      
+      fill(255);
+      stroke(224);
+      strokeWeight(0);
+      rect(-80, 18 - leftShoulderLift/s, 70, 55, 15, 15, 5, 5);
+      rect(80, 18 - rightShoulderLift/s, 70, 55, 15, 15, 5, 5);
+
+      fill(200, 175, 175);
+      noStroke();
+      ellipse(0, -99, 100, 140);
+      
+      fill(255, 238, 238);
+      noStroke();
+      ellipse(0, -108, 140, 148);
+
+      stroke(0);
+      strokeWeight(1.3);
+      line(0, -103, -3, -93);
+      line(-3, -93, 4.5, -91.5);
+      
+      // 귀 (놀람 시 크기 증가)
+      let earWidth = isSurprised ? 24 : 20;
+      let earHeight = isSurprised ? 33 : 27;
+      
+      fill(255, 238, 238);
+      noStroke();
+      ellipse(-75, -110, earWidth, earHeight);
+      ellipse(75, -110, earWidth, earHeight);
+      
+      stroke(0);
+      strokeWeight(1);
+      line(-80, -112, -73, -112);
+      line(80, -112, 73, -112);
+      line(-76.3, -112, -76.3, -107);
+      line(76.3, -112, 76.3, -107);
+      
+      // === 입 (미소/놀람 효과) ===
+      if (isSurprised) {
+        fill(200, 140, 140);
+        noStroke();
+        ellipse(0, -75, 20, 25);
+        
+      } else if (isSmiling) {
+        fill(200, 140, 140);
+        noStroke();
+        arc(0, -75, 42, 32, 0, PI);
+        
+        fill(255, 220, 220, 180);
+        noStroke();
+        ellipse(-blushXOffset, blushYOffset, blushWidth, blushHeight);
+        ellipse(blushXOffset, blushYOffset, blushWidth, blushHeight);
+      } else {
+        fill(200, 140, 140);
+        noStroke();
+        arc(0, -75, 35, 25, 0, PI);
+      }
+      
+      push();
+      translate(hairSwingX, -133);
+      fill(0);
+      arc(0, 0, 100, 140, PI, TWO_PI);
+      pop();
+      
+      push();
+      translate(hairSwingX, -133);
+      fill(255, 238, 238);
+      noStroke();
+      ellipse(-10, -7, 6, 25);
+      pop();
+
+      // === 눈 깜박임/놀람 효과 ===
+      if (!isBlinking) {
+        if (isSurprised) {
+          noFill();
+          stroke(0);
+          strokeWeight(2);
+          arc(-31, -116, 32, 32, PI, TWO_PI);
+          arc(31, -116, 32, 32, PI, TWO_PI);
+          
+          fill(255);
+          noStroke();
+          ellipse(-30, -117, 32, 30);
+          ellipse(30, -117, 32, 30);
+          
+          fill(0);
+          noStroke();
+          ellipse(-28, -117, 18, 22);
+          ellipse(28, -117, 18, 22);
+          
+          fill(255);
+          noStroke();
+          ellipse(-28, -122, 4, 4);
+          ellipse(28, -122, 4, 4);
+          
+        } else {
+          noFill();
+          stroke(0);
+          strokeWeight(2);
+          arc(-31, -116, 27, 22, PI, TWO_PI);
+          arc(31, -116, 27, 22, PI, TWO_PI);
+          
+          fill(255);
+          noStroke();
+          ellipse(-30, -117, 27, 21);
+          ellipse(30, -117, 27, 21);
+          
+          fill(0);
+          noStroke();
+          ellipse(-28 + pupilOffsetX, -117 + pupilOffsetY, 15, 18);
+          ellipse(28 + pupilOffsetX, -117 + pupilOffsetY, 15, 18);
+          
+          fill(255);
+          noStroke();
+          ellipse(-28 + pupilOffsetX, -121 + pupilOffsetY, 3, 3);
+          ellipse(28 + pupilOffsetX, -121 + pupilOffsetY, 3, 3);
+        }
+        
+      } else {
+        stroke(0);
+        strokeWeight(2);
+        noFill();
+        line(-44, -116, -18, -116);
+        line(18, -116, 44, -116);
+      }
+
+      pop();
+    }
+
+    function keyPressed() {
+      if (key === 's') {
+        // saveGif('mySketch', 9); // GIF 저장은 로컬에서만 주로 작동
+      } else {
+        isSurprised = true;
+        surpriseTimer = 90;
+      }
+    }
+    // ******************************************************
+    // P5.js 코드 끝
+    // ******************************************************
+  </script>
+</body>
+</html>
