@@ -10,262 +10,263 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.2/p5.js"></script>
     <style>
         body {
-            /* ... (기존 스타일 유지) ... */
-            font-family: 'Pretendard', sans-serif; /* 폰트 적용 */
+            font-family: 'Pretendard', sans-serif; 
+            /* 캔버스 중앙 정렬을 위한 CSS */
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            display: flex;
+            justify-content: center; /* 가로 중앙 정렬 */
+            align-items: center; /* 세로 중앙 정렬 */
+            height: 100vh;
+            background-color: black;
+            color: white; /* 텍스트가 있다면 흰색으로 */
         }
         .back-btn {
-            /* 위치는 유지 */
             position: fixed;
             top: 20px;
             left: 20px;
             
-            /* 스타일 수정 */
             padding: 10px 20px;
-            background: white; /* 흰색 배경 */
-            border: 2px solid #000; /* 검은색 테두리 */
-            color: #000; /* 검정색 글자 */
+            background: white; 
+            border: 2px solid #000; 
+            color: #000; 
             text-decoration: none;
-            border-radius: 8px; /* 메인 페이지와 통일 */
-            font-weight: 600; /* Pretendard 폰트에 맞춰 굵기 조정 */
+            border-radius: 8px;
+            font-weight: 600;
             z-index: 1000;
             transition: all 0.2s ease;
         }
         .back-btn:hover {
-            background: #000; /* 호버 시 검은색 배경 */
-            color: white; /* 호버 시 흰색 글자 */
+            background: #000; 
+            color: white; 
         }
     </style>
 </head>
 <body>
-  <a href="./index.html" class="back-btn">✔ 메인으로 돌아가기</a>
-  
-  <script>
-    // ******************************************************
-    // 사용자가 제공한 P5.js 코드 시작
-    // ******************************************************
+    <a href="./index.html" class="back-btn">✔ 메인으로 돌아가기</a>
     
-    // 애니메이션 변수
-    let animationPhase = 0;
-    let phaseTimer = 0;
-    let explosionProgress = 0;
-    let assembleProgress = 0;
-    let growthScale = 1;
-
-    // 눈 입자 배열
-    let snowflakes = [];
-
-    function setup() {
-      createCanvas(1280, 960); // 캔버스 크기
-      frameRate(30); // 30fps
-      
-      // 눈송이 30개
-      for (let i = 0; i < 30; i++) {
-        snowflakes.push({
-          x: random(width),
-          y: random(-height, 0),
-          size: random(4, 8),
-          speed: random(1.5, 2.5),
-          sway: random(-0.3, 0.3)
-        });
-      }
-    }
-
-    function draw() {
-      background(0); // 검정색 배경
-      
-      phaseTimer++;
-      
-      if (animationPhase === 0) {
-        // 분해 단계 (2.5초)
-        explosionProgress = min(phaseTimer / 60, 1);
-        if (phaseTimer > 60) {
-          animationPhase = 1;
-          phaseTimer = 0;
-        }
-      } else if (animationPhase === 1) {
-        // 합쳐짐 단계 (2.5초)
-        assembleProgress = min(phaseTimer / 60, 1);
-        if (phaseTimer > 60) {
-          animationPhase = 2;
-          phaseTimer = 0;
-        }
-      } else if (animationPhase === 2) {
-        // 커지기 + 귀 움직임 단계 (3초)
-        growthScale = 1 + (phaseTimer / 72) * 0.4;
-        growthScale = min(growthScale, 1.4);
-      }
-      
-      // 눈 내리기
-      drawSnow();
-      
-      // 토끼 그리기
-      drawRabbit(width / 2, height - 120, 1.3 * growthScale);
-    }
-
-    // 눈 내리기 함수
-    function drawSnow() {
-      fill(255);
-      noStroke();
-      
-      for (let flake of snowflakes) {
-        ellipse(flake.x, flake.y, flake.size, flake.size);
+    <script>
+        // ******************************************************
+        // P5.js 코드 시작
+        // ******************************************************
         
-        flake.y += flake.speed;
-        flake.x += flake.sway;
-        
-        if (flake.y > height) {
-          flake.y = random(-50, 0);
-          flake.x = random(width);
+        // 애니메이션 변수
+        let animationPhase = 0;
+        let phaseTimer = 0;
+        let explosionProgress = 0;
+        let assembleProgress = 0;
+        let growthScale = 1;
+
+        // 눈 입자 배열
+        let snowflakes = [];
+
+        function setup() {
+            createCanvas(640, 480);
+            frameRate(30);
+            
+            // 눈송이 50개로 증가 (수정 완료)
+            for (let i = 0; i < 50; i++) {
+                snowflakes.push({
+                    x: random(width),
+                    y: random(-height, 0),
+                    size: random(4, 8),
+                    speed: random(1.5, 2.5),
+                    sway: random(-0.3, 0.3)
+                });
+            }
         }
-      }
-    }
 
-    // 토끼 인형 함수
-    function drawRabbit(x, y, s) {
-      push();
-      translate(x, y);
-      scale(s);
+        function draw() {
+            background(0);
+            
+            phaseTimer++;
+            
+            if (animationPhase === 0) {
+                explosionProgress = min(phaseTimer / 60, 1);
+                if (phaseTimer > 60) {
+                    animationPhase = 1;
+                    phaseTimer = 0;
+                }
+            } else if (animationPhase === 1) {
+                assembleProgress = min(phaseTimer / 60, 1);
+                if (phaseTimer > 60) {
+                    animationPhase = 2;
+                    phaseTimer = 0;
+                }
+            } else if (animationPhase === 2) {
+                growthScale = 1 + (phaseTimer / 72) * 0.4;
+                growthScale = min(growthScale, 1.4);
+            }
+            
+            drawSnow();
+            
+            // 토끼 그리기
+            drawRabbit(width / 2, height - 120, 1.3 * growthScale);
+        }
 
-      let bodyColor = getAnimatedColor();
-      
-      // 귀 움직임 계산
-      let earBounce = 0;
-      if (animationPhase === 2) {
-        earBounce = sin(frameCount * 0.12) * 8; // 움직임 범위 축소
-      }
-      
-      stroke(0);
-      strokeWeight(2);
-      fill(bodyColor);
+        // 눈 내리기 함수
+        function drawSnow() {
+            fill(255);
+            noStroke();
+            
+            for (let flake of snowflakes) {
+                ellipse(flake.x, flake.y, flake.size, flake.size);
+                
+                flake.y += flake.speed;
+                flake.x += flake.sway;
+                
+                if (flake.y > height) {
+                    flake.y = random(-50, 0);
+                    flake.x = random(width);
+                }
+            }
+        }
 
-      // 왼쪽 팔
-      push();
-      let leftArmOffset = getPartOffset(-60, -100, 0);
-      translate(-20 + leftArmOffset.x, -20 + leftArmOffset.y);
-      rotate(radians(26));
-      ellipse(0, 0, 20, 50);
-      pop();
+        // 토끼 인형 함수 (나머지 코드 유지)
+        function drawRabbit(x, y, s) {
+            push();
+            translate(x, y);
+            scale(s);
 
-      // 오른쪽 팔
-      push();
-      let rightArmOffset = getPartOffset(60, -100, 1);
-      translate(20 + rightArmOffset.x, -20 + rightArmOffset.y);
-      rotate(radians(-26));
-      ellipse(0, 0, -20, -50);
-      pop();
-      
-      // 몸통
-      push();
-      let bodyOffset = getPartOffset(0, -80, 2);
-      translate(bodyOffset.x, bodyOffset.y);
-      triangle(-32, 15, 32, 15, 0, -65);
-      pop();
+            let bodyColor = getAnimatedColor();
+            let earBounce = 0;
+            if (animationPhase === 2) {
+                earBounce = sin(frameCount * 0.12) * 8;
+            }
+            
+            stroke(0);
+            strokeWeight(2);
+            fill(bodyColor);
 
-      // 왼쪽 다리
-      push();
-      let leftLegOffset = getPartOffset(-40, -60, 3);
-      translate(-25 + leftLegOffset.x, 10 + leftLegOffset.y);
-      ellipse(0, 0, 35, 50);
-      pop();
-      
-      // 오른쪽 다리
-      push();
-      let rightLegOffset = getPartOffset(40, -60, 4);
-      translate(25 + rightLegOffset.x, 10 + rightLegOffset.y);
-      ellipse(0, 0, 35, 50);
-      pop();
+            // 왼쪽 팔
+            push();
+            let leftArmOffset = getPartOffset(-60, -100, 0);
+            translate(-20 + leftArmOffset.x, -20 + leftArmOffset.y);
+            rotate(radians(26));
+            ellipse(0, 0, 20, 50);
+            pop();
 
-      // 왼쪽 귀
-      push();
-      let leftEarOffset = getPartOffset(-50, -150, 5);
-      translate(-29 + leftEarOffset.x, -125 + leftEarOffset.y + earBounce);
-      ellipse(0, 0, 25, 60);
-      pop();
+            // 오른쪽 팔
+            push();
+            let rightArmOffset = getPartOffset(60, -100, 1);
+            translate(20 + rightArmOffset.x, -20 + rightArmOffset.y);
+            rotate(radians(-26));
+            ellipse(0, 0, -20, -50);
+            pop();
+            
+            // 몸통
+            push();
+            let bodyOffset = getPartOffset(0, -80, 2);
+            translate(bodyOffset.x, bodyOffset.y);
+            triangle(-32, 15, 32, 15, 0, -65);
+            pop();
 
-      // 오른쪽 귀
-      push();
-      let rightEarOffset = getPartOffset(50, -150, 6);
-      translate(33 + rightEarOffset.x, -125 + rightEarOffset.y + earBounce);
-      rotate(radians(155));
-      ellipse(18, -50, 25, 60);
-      pop();
-      
-      // 머리
-      push();
-      let headOffset = getPartOffset(0, -120, 7);
-      translate(headOffset.x, headOffset.y);
-      ellipse(0, -80, 70, 70);
-      pop();
+            // 왼쪽 다리
+            push();
+            let leftLegOffset = getPartOffset(-40, -60, 3);
+            translate(-25 + leftLegOffset.x, 10 + leftLegOffset.y);
+            ellipse(0, 0, 35, 50);
+            pop();
+            
+            // 오른쪽 다리
+            push();
+            let rightLegOffset = getPartOffset(40, -60, 4);
+            translate(25 + rightLegOffset.x, 10 + rightLegOffset.y);
+            ellipse(0, 0, 35, 50);
+            pop();
 
-      // 얼굴
-      fill(0);
-      noStroke();
-      
-      // 왼쪽 눈
-      push();
-      let leftEyeOffset = getPartOffset(-20, -130, 8);
-      translate(leftEyeOffset.x, leftEyeOffset.y);
-      ellipse(-15, -85, 10, 10);
-      pop();
-      
-      // 오른쪽 눈
-      push();
-      let rightEyeOffset = getPartOffset(20, -130, 9);
-      translate(rightEyeOffset.x, rightEyeOffset.y);
-      ellipse(15, -85, 10, 10);
-      pop();
-      
-      // 코
-      push();
-      let noseOffset = getPartOffset(0, -125, 10);
-      translate(noseOffset.x, noseOffset.y);
-      ellipse(0, -73, 10, 8);
-      pop();
+            // 왼쪽 귀
+            push();
+            let leftEarOffset = getPartOffset(-50, -150, 5);
+            translate(-29 + leftEarOffset.x, -125 + leftEarOffset.y + earBounce);
+            ellipse(0, 0, 25, 60);
+            pop();
 
-      pop();
-    }
+            // 오른쪽 귀
+            push();
+            let rightEarOffset = getPartOffset(50, -150, 6);
+            translate(33 + rightEarOffset.x, -125 + rightEarOffset.y + earBounce);
+            rotate(radians(155));
+            ellipse(18, -50, 25, 60);
+            pop();
+            
+            // 머리
+            push();
+            let headOffset = getPartOffset(0, -120, 7);
+            translate(headOffset.x, headOffset.y);
+            ellipse(0, -80, 70, 70);
+            pop();
 
-    // 각 부위의 오프셋 계산
-    function getPartOffset(targetX, targetY, seed) {
-      let offset = { x: 0, y: 0 };
-      
-      if (animationPhase === 0) {
-        let angle = seed * 30 + sin(frameCount * 0.06 + seed) * 8;
-        let distance = explosionProgress * 180; 
-        offset.x = cos(radians(angle)) * distance + targetX * explosionProgress;
-        offset.y = sin(radians(angle)) * distance + targetY * explosionProgress;
-        
-      } else if (animationPhase === 1) {
-        let remainingProgress = 1 - assembleProgress;
-        let angle = seed * 30 + sin(frameCount * 0.06 + seed) * 8;
-        let distance = remainingProgress * 180;
-        offset.x = cos(radians(angle)) * distance + targetX * remainingProgress;
-        offset.y = sin(radians(angle)) * distance + targetY * remainingProgress;
-      }
-      
-      return offset;
-    }
+            // 얼굴
+            fill(0);
+            noStroke();
+            
+            // 왼쪽 눈
+            push();
+            let leftEyeOffset = getPartOffset(-20, -130, 8);
+            translate(leftEyeOffset.x, leftEyeOffset.y);
+            ellipse(-15, -85, 10, 10);
+            pop();
+            
+            // 오른쪽 눈
+            push();
+            let rightEyeOffset = getPartOffset(20, -130, 9);
+            translate(rightEyeOffset.x, rightEyeOffset.y);
+            ellipse(15, -85, 10, 10);
+            pop();
+            
+            // 코
+            push();
+            let noseOffset = getPartOffset(0, -125, 10);
+            translate(noseOffset.x, noseOffset.y);
+            ellipse(0, -73, 10, 8);
+            pop();
 
-    // 색상 애니메이션
-    function getAnimatedColor() {
-      if (animationPhase === 0) {
-        return lerpColor(color(0), color(128), explosionProgress);
-      } else if (animationPhase === 1) {
-        return lerpColor(color(128), color(255), assembleProgress);
-      } else {
-        return color(255);
-      }
-    }
+            pop();
+        }
 
-    // 's' 키로 8초 GIF 저장
-    function keyPressed() {
-      if (key === 's' || key === 'S') {
-        // saveGif('rabbit_animation', 8); // GIF 저장은 로컬에서만 주로 작동
-      }
-    }
-    // ******************************************************
-    // P5.js 코드 끝
-    // ******************************************************
-  </script>
+        // 각 부위의 오프셋 계산
+        function getPartOffset(targetX, targetY, seed) {
+            let offset = { x: 0, y: 0 };
+            
+            if (animationPhase === 0) {
+                let angle = seed * 30 + sin(frameCount * 0.06 + seed) * 8;
+                let distance = explosionProgress * 180; 
+                offset.x = cos(radians(angle)) * distance + targetX * explosionProgress;
+                offset.y = sin(radians(angle)) * distance + targetY * explosionProgress;
+                
+            } else if (animationPhase === 1) {
+                let remainingProgress = 1 - assembleProgress;
+                let angle = seed * 30 + sin(frameCount * 0.06 + seed) * 8;
+                let distance = remainingProgress * 180;
+                offset.x = cos(radians(angle)) * distance + targetX * remainingProgress;
+                offset.y = sin(radians(angle)) * distance + targetY * remainingProgress;
+            }
+            
+            return offset;
+        }
+
+        // 색상 애니메이션
+        function getAnimatedColor() {
+            if (animationPhase === 0) {
+                return lerpColor(color(0), color(128), explosionProgress);
+            } else if (animationPhase === 1) {
+                return lerpColor(color(128), color(255), assembleProgress);
+            } else {
+                return color(255);
+            }
+        }
+
+        // 's' 키로 8초 GIF 저장
+        function keyPressed() {
+            if (key === 's' || key === 'S') {
+                // saveGif('rabbit_animation', 8);
+            }
+        }
+        // ******************************************************
+        // P5.js 코드 끝
+        // ******************************************************
+    </script>
 </body>
 </html>
